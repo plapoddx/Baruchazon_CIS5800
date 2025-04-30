@@ -120,7 +120,7 @@
   if (confirm('Are you sure you want to cancel this order?')) {
     const confirmationNumber = order.confirmationNumber.replace('BZ-', '');
 
-    fetch(`http://baruchazon-gus1xwd0n-plapoddxs-projects.vercel.app:3000/api/orders/${confirmationNumber}/status`, {
+    fetch(`http://baruchazon.vercel.app:3000/api/orders/${confirmationNumber}/status`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status: 'Cancelled' }) 
