@@ -51,28 +51,7 @@ Welcome to **Baruchazon** — a full-featured e-commerce platform for online sho
 - Others
   - LocalStorage (Cart and Order Persistence)
   - REST API integration
-
-## Folder Structure
-
-```
-baruchazon/
-├── index.html
-├── products.html
-├── product.html
-├── cart.html
-├── guest.html
-├── completed.html
-├── lookup.html
-├── admin.html
-├── manage-products.html
-├── project.css
-├── server.js
-├── /images/
-├── /scripts/
-├── /api/
-└── README.md
-```
-
+  
 ## Installation Instructions
 
 1. Clone the repository
@@ -88,14 +67,15 @@ cd baruchazon
 npm install express mysql2 cors
 ```
 
-3. Set up MySQL Database
-
+3. Optional! Set up MySQL Database
+- (If you want. I ported my own SQL Server)
 - Create a database `baruchazon`
 - Import the tables for:
   - `products`
   - `orders`
   - `order_items`
 - Adjust your `server.js` database credentials if necessary
+- I added a file for all the SQL Query I used to create the table. 
 
 4. Run the server
 
