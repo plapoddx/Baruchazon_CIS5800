@@ -315,6 +315,6 @@ app.delete('/api/products/:id', (req, res) => {
 
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Server running on http://baruchazon.vercel.app:${PORT}`);
+  console.log(`Server running on https://api-baruchazon-server.onrender.com${PORT}`);
 });
 

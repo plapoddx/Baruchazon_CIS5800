@@ -90,7 +90,7 @@ fetch('navbar.html')
 <script>
   const params = new URLSearchParams(window.location.search);
   const productId = params.get('id');
-  fetch(`https://api-baruchazon-server.onrender.com:3000/api/products/${productId}`)
+  fetch(`https://api-baruchazon-server.onrender.com/api/products/${productId}`)
     .then(response => response.json())
     .then(product => {
       const container = document.getElementById('product-container');

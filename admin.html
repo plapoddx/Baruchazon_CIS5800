@@ -156,7 +156,7 @@ let allOrders = [];
 
 function deleteOrder(orderId) {
   if (confirm('Are you sure you want to delete this order?')) {
-    fetch(`https://api-baruchazon-server.onrender.com:3000/api/orders/${orderId}`, { method: 'DELETE' })
+    fetch(`https://api-baruchazon-server.onrender.com/api/orders/${orderId}`, { method: 'DELETE' })
     .then(res => {
       if (!res.ok) throw new Error('Delete failed');
       alert('Order DELETED successfully');
@@ -168,7 +168,7 @@ function deleteOrder(orderId) {
 
 function updateStatus(orderId) {
   const newStatus = document.getElementById(`status-${orderId}`).value;
-  fetch(`https://api-baruchazon-server.onrender.com:3000/api/orders/${orderId}/status`, {
+  fetch(`https://api-baruchazon-server.onrender.com/api/orders/${orderId}/status`, {
     method: 'PUT',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ status: newStatus })
@@ -264,7 +264,7 @@ function renderOrders(data) {
 }
 
 // Initial Fetch
-fetch('https://api-baruchazon-server.onrender.com:3000/api/orders-with-items')
+fetch('https://api-baruchazon-server.onrender.com/api/orders-with-items')
   .then(res => res.json())
   .then(data => {
     document.getElementById('loading').style.display = 'none';

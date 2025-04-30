@@ -187,7 +187,7 @@
       const deliveryDate = new Date();
       deliveryDate.setDate(deliveryDate.getDate() + randomDays);
 
-      fetch('https://api-baruchazon-server.onrender.com:3000/api/orders', {
+      fetch('https://api-baruchazon-server.onrender.com/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
