@@ -97,7 +97,7 @@
     updateCartCount();
   });
 
-  fetch('http://baruchazon-gus1xwd0n-plapoddxs-projects.vercel.app:3000/api/products')
+  fetch('https://api-baruchazon-server.onrender.com:3000/api/products')
     .then(response => response.json())
     .then(products => {
       const grid = document.getElementById('product-grid');
