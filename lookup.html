@@ -178,7 +178,7 @@ document.getElementById('lookup-form').addEventListener('submit', function(event
     const confirmationNumber = document.getElementById('confirmationNumber').value;
     const email = document.getElementById('email').value;
 
-    fetch('http://localhost:3000/api/orders/lookup', {
+    fetch('http://baruchazon-gus1xwd0n-plapoddxs-projects.vercel.app:3000/api/orders/lookup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ confirmationNumber, email })
