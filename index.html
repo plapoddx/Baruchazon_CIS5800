@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Baruchazon</title>
+  <link rel="icon" href="Baruchazon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="project.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    .carousel {
+      position: relative;
+      overflow: hidden;
+      margin: 20px 0;
+      min-height: 400px;
+      background-color: #f8f8f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+    }
+
+    .slide.active {
+      display: block;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 400px;
+      object-fit: cover;
+    }
+
+    .prev, .next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #4dabf7;
+      border: none;
+      padding: 10px;
+      cursor: pointer;
+      font-size: 20px;
+      border-radius: 50%;
+      color: white;
+    }
+
+    .prev { left: 10px; }
+    .next { right: 10px; }
+
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .hero h2 {
+      font-size: 36px;
+      font-weight: 700;
+      color: #0b1a33;
+    }
+
+    .hero p {
+      font-size: 18px;
+      color: #555;
+    }
+
+    .hero .btn {
+      background-color: #0b1a33;
+      color: white;
+      font-size: 16px;
+      padding: 12px 24px;
+      margin-top: 20px;
+      border-radius: 30px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 30px;
+      padding: 40px 5%;
+    }
+
+    .product-category {
+      font-size: 14px;
+      font-weight: 600;
+      color: #999;
+    }
+
+    .product-rating {
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    footer {
+      background-color: #081a35;
+      color: white;
+      text-align: center;
+      padding: 20px 0;
+      .hero-slider {
+  position: relative;
+  height: 80vh;
+  overflow: hidden;
+  border-radius: 0;}}
+
+.hero-slider {
+  position: relative;
+  height: 80vh;
+  overflow: hidden;
+}
+
+.hero-slide {
+  position: absolute;
+  width: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+  z-index: 0;
+}
+.hero-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+  </style>
+</head>
+
+<body>
+  <div id="navbar"></div>
+
+  <script>
+    fetch('navbar.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('navbar').innerHTML = data;
+        updateCartCount();
+      });
+
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const cartCountElement = document.getElementById('cart-count');
+      if (cartCountElement) cartCountElement.textContent = totalItems;
+    }
+
+    document.addEventListener('DOMContentLoaded', updateCartCount);
+  </script>
+
+  <main>
+    <section class="hero-slider">
+      <div class="hero-slide active">
+        <img src="images/hero1.jpg" alt="Hero 1" />
+        <div class="hero-content">
+          <h1>Party Ready</h1>
+          <p>Refresh your wardrobe with our latest seasonal styles.</p>
+          <a href="clothes.html" class="btn-hero">Shop Now</a>
+        </div>
+      </div>
+      <div class="hero-slide">
+        <img src="images/hero2.webp" alt="Hero 2" />
+        <div class="hero-content">
+          <h1>Elevate Every Room</h1>
+          <p>Timeless décor, everyday comfort—discover home essentials that fit your style..</p>
+          <a href="homegoods.html" class="btn-hero">Explore</a>
+        </div>
+      </div>
+      <div class="hero-slide">
+        <img src="images/hero3.png" alt="Hero 3" />
+        <div class="hero-content">
+          <h1>Next-Gen Tech Starts Here</h1>
+          <p>Explore the latest gadgets designed to power your day and simplify your life.</p>
+          <a href="electronics.html" class="btn-hero">Explore</a>
+        </div>
+      </div>
+      <button class="hero-prev" onclick="moveHero(-1)">❮</button>
+      <button class="hero-next" onclick="moveHero(1)">❯</button>
+    </section>
+
+    <section class="hero">
+      <h2>Discover What You Love, Shop What You Need!</h2>
+      <p>From Inspiration to Your Doorstep.</p>
+      <a href="products.html" class="btn">Shop Now</a>
+    </section>
+
+    <div class="product-grid" id="product-grid"></div>
+    <div id="pagination" class="d-flex justify-content-center mb-5"></div>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Baruchazon. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function moveSlide(direction) {
+      const slides = document.querySelectorAll('.slide');
+      const currentSlide = document.querySelector('.slide.active');
+      const currentIndex = Array.from(slides).indexOf(currentSlide);
+      let nextIndex = currentIndex + direction;
+      if (nextIndex < 0) nextIndex = slides.length - 1;
+      if (nextIndex >= slides.length) nextIndex = 0;
+      currentSlide.classList.remove('active');
+      slides[nextIndex].classList.add('active');
+    }
+  </script>
+
+  <script>
+    fetch('http://localhost:3000/api/products')
+      .then(response => response.json())
+      .then(products => {
+        const grid = document.getElementById('product-grid');
+        const pagination = document.getElementById('pagination');
+        const productsPerPage = 20;
+        let currentPage = 1;
+        const totalPages = Math.ceil(products.length / productsPerPage);
+
+        function renderProducts(page) {
+          grid.innerHTML = '';
+          const start = (page - 1) * productsPerPage;
+          const pageItems = products.slice(start, start + productsPerPage);
+
+          pageItems.forEach(product => {
+            const card = document.createElement('div');
+            card.className = 'card product-card';
+            card.style = 'padding: 15px; border: none;';
+            card.innerHTML = `
+              <img src="images/${product.image_url}" class="card-img-top" alt="${product.name}">
+              <div class="card-body text-center">
+                <div class="product-category">${product.category}</div>
+                <h5 class="card-title">${product.name}</h5>
+                <div class="product-rating">
+                  ${'★'.repeat(Math.floor(product.rating))}${'☆'.repeat(5 - Math.floor(product.rating))}
+                  <span>${Number(product.rating).toFixed(1)}</span>
+                </div>
+                <p class="card-text">$${Number(product.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                <a href="product.html?id=${product.id}" class="btn btn-outline-primary btn-sm">View</a>
+                <button class="btn btn-success btn-sm add-to-cart-btn" data-id="${product.id}">Quick Add</button>
+              </div>
+            `;
+            grid.appendChild(card);
+          });
+
+          setupAddToCartButtons();
+          renderPagination();
+        }
+
+        function renderPagination() {
+          pagination.innerHTML = '';
+          const prev = document.createElement('button');
+          prev.className = 'btn btn-secondary mx-2';
+          prev.textContent = 'Previous';
+          prev.disabled = currentPage === 1;
+          prev.onclick = () => renderProducts(--currentPage);
+          pagination.appendChild(prev);
+
+          const next = document.createElement('button');
+          next.className = 'btn btn-secondary mx-2';
+          next.textContent = 'Next';
+          next.disabled = currentPage === totalPages;
+          next.onclick = () => renderProducts(++currentPage);
+          pagination.appendChild(next);
+        }
+
+        function setupAddToCartButtons() {
+          document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+              const id = +btn.getAttribute('data-id');
+              const product = products.find(p => p.id === id);
+              let cart = JSON.parse(localStorage.getItem('cart')) || [];
+              const existing = cart.find(i => i.id === id);
+              if (existing) existing.quantity += 1;
+              else cart.push({ id: product.id, name: product.name, price: +product.price, image_url: product.image_url, quantity: 1 });
+              localStorage.setItem('cart', JSON.stringify(cart));
+              alert(`${product.name} has been added to cart!`);
+              updateCartCount();
+            });
+          });
+        }
+
+        renderProducts(currentPage);
+      });
+  </script>
+
+<script> 
+
+let currentHero = 0;
+function moveHero(direction) {
+  const slides = document.querySelectorAll('.hero-slide');
+  slides[currentHero].classList.remove('active');
+  currentHero = (currentHero + direction + slides.length) % slides.length;
+  slides[currentHero].classList.add('active');
+}
+
+setInterval(() => moveHero(1), 7000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Order Confirmation - Baruchazon</title>
+  <link rel="stylesheet" href="project.css">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f4f8;
+      padding: 60px 20px;
+    }
+
+    .receipt-container {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      padding: 50px 40px;
+      text-align: center;
+      animation: slideUp 0.6s ease-out;
+    }
+
+    .check-icon {
+      font-size: 60px;
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: #0b1a33;
+      font-weight: 700;
+      font-size: 28px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 12px;
+      color: #333;
+    }
+
+    .highlight {
+      font-weight: 600;
+      color: #0b1a33;
+    }
+
+    .btn-home, .btn-cancel {
+      margin-top: 20px;
+      padding: 12px 28px;
+      font-size: 16px;
+      border-radius: 30px;
+    }
+
+    .btn-cancel {
+      background-color: #ff4d4d;
+      border: none;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .btn-cancel:hover {
+      background-color: #e60000;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="receipt-container">
+  <h1>Thank You for Your Purchase!</h1>
+  <p id="customer-name"></p>
+  <p>Confirmation Number:</p>
+  <p id="confirmation-number" class="highlight" style="font-size: 20px;"></p>
+  <p>Amount Paid:</p>
+  <p id="amount-spent" class="highlight" style="font-size: 20px;"></p>
+  <p>Shipping Address:</p>
+  <p id="shipping-address" class="highlight"></p>
+  <p>Estimated Delivery:</p>
+  <p id="delivery-date" class="highlight"></p>
+
+  <div class="mt-4">
+    <a href="index.html" class="btn btn-primary btn-home">Continue Shopping</a>
+    <button onclick="cancelOrder()" class="btn btn-cancel">Cancel Order</button>
+  </div>
+</div>
+
+<script>
+  const order = JSON.parse(localStorage.getItem('orderDetails'));
+  const cart = JSON.parse(localStorage.getItem('cartSnapshot')) || [];
+
+  if (order) {
+    document.getElementById('customer-name').textContent = `Hi ${order.firstName} ${order.lastName},`;
+    document.getElementById('shipping-address').textContent = `${order.address}, ${order.city}, ${order.zipcode}`;
+    document.getElementById('delivery-date').textContent = order.deliveryDate;
+    document.getElementById('confirmation-number').textContent = `#${order.confirmationNumber}`;
+
+    // Calculate total amount
+    let total = 0;
+    if (cart.length > 0) {
+      total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }
+    document.getElementById('amount-spent').textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+  } else {
+    document.querySelector('.receipt-container').innerHTML = `
+      <h1>Oops!</h1>
+      <p>No recent order found.</p>
+      <a href="index.html" class="btn btn-secondary btn-home">Back to Home</a>
+    `;
+  }
+
+  function cancelOrder() {
+  if (confirm('Are you sure you want to cancel this order?')) {
+    const confirmationNumber = order.confirmationNumber.replace('BZ-', '');
+
+    fetch(`http://localhost:3000/api/orders/${confirmationNumber}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'Cancelled' }) 
+    })
+      .then(res => {
+        if (!res.ok) throw new Error('Cancel failed');
+        alert('Your order has been cancelled.');
+        localStorage.removeItem('orderDetails');
+        window.location.href = 'index.html';
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Order has not been cancelled. Please try again later. Or contact support.');
+      });
+    }
+  }
+</script>
+
+</body>
+</html>

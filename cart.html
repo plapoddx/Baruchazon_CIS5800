@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Baruchazon - Cart</title>
+    <link rel="icon" type="image/x-icon" href="Baruchazon.png">
+    <link rel="stylesheet" href="project.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+    <style>
+        body, html {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+          display: flex;
+          flex-direction: column;
+          font-family: 'Poppins', sans-serif;
+          background-color: #f5f5f5;
+        }
+
+        main {
+          flex: 1 0 auto;
+          padding-top: 100px;
+          padding-bottom: 40px;
+        }
+
+        h1 {
+          text-align: center;
+          font-size: 36px;
+          font-weight: bold;
+          color: #0b1a33;
+          margin-bottom: 30px;
+        }
+
+        footer {
+          flex-shrink: 0;
+          background-color: #0b1a33;
+          color: white;
+          text-align: center;
+          padding: 10px 0;
+          margin-top: auto;
+        }
+
+        .container {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+        }
+
+        #cart-items {
+          width: 90%;
+          max-width: 900px;
+          margin: 20px auto;
+        }
+
+        .cart-item {
+          background: white;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 20px;
+          margin-bottom: 20px;
+          border-radius: 12px;
+          box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+          transition: transform 0.2s;
+        }
+
+        .cart-item:hover {
+          transform: scale(1.01);
+        }
+
+        .cart-item img {
+          width: 100px;
+          height: auto;
+          border-radius: 8px;
+          object-fit: cover;
+        }
+
+        .item-details {
+          flex: 1;
+          margin-left: 20px;
+          text-align: left;
+        }
+
+        .item-details h5 {
+          font-size: 20px;
+          font-weight: 600;
+          margin-bottom: 10px;
+        }
+
+        .item-details p {
+          margin: 5px 0;
+          font-size: 16px;
+          color: #555;
+        }
+
+        .item-details .btn {
+          background-color: #ff4d4d;
+          color: white;
+          border: none;
+          margin-top: 10px;
+          padding: 8px 14px;
+          border-radius: 6px;
+          font-size: 14px;
+          transition: background-color 0.3s ease;
+        }
+
+        .item-details .btn:hover {
+          background-color: #e60000;
+        }
+
+        #cart-total {
+          text-align: right;
+          font-size: 22px;
+          font-weight: bold;
+          color: #0b1a33;
+          margin-right: 5%;
+        }
+
+        #checkout-btn {
+          background-color: #0b1a33;
+          border: none;
+          padding: 14px 28px;
+          font-size: 18px;
+          font-weight: bold;
+          border-radius: 30px;
+          margin-top: 20px;
+          margin-bottom: 20px;
+          transition: background-color 0.3s;
+        }
+
+        #checkout-btn:hover {
+          background-color: #09264d;
+        }
+
+        .modal-content {
+          background-color: #f8f9fa;
+          border-radius: 10px;
+        }
+
+        .btn-group a.btn {
+          width: 45%;
+        }
+    </style>
+</head>
+
+<body>
+
+<div id="navbar"></div>
+
+<main class="container my-5">
+    <h1>Your Cart</h1>
+    <div id="cart-items" class="mt-4"></div>
+    <div id="cart-total" class="text-right my-4"></div>
+    <button class="btn btn-primary" id="checkout-btn" data-toggle="modal" data-target="#checkoutModal" disabled>Proceed to Checkout</button>
+</main>
+
+<footer>
+    <p>&copy; 2025 Baruchazon. All rights reserved.</p>
+</footer>
+
+<div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h5 class="modal-title" id="checkoutModalLabel">Confirmation</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+              </button>
+          </div>
+          <div class="modal-body">
+              <p>Would you like to checkout now?</p>
+              <div class="btn-group d-flex justify-content-around">
+                  <a href="guest.html" class="btn btn-primary">Continue</a>
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+  // Navigation bar
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('navbar').innerHTML = data;
+      updateCartCount();
+    });
+
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartCountElement = document.getElementById('cart-count');
+    if (cartCountElement) {
+      cartCountElement.textContent = totalItems;
+    }
+  }
+
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+  function displayCartItems() {
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotal = document.getElementById('cart-total');
+    let totalAmount = 0;
+
+    cartItemsContainer.innerHTML = '';
+
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+        cartTotal.innerHTML = '';
+        document.getElementById('checkout-btn').disabled = true;
+        return;
+    }
+
+    cart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.classList.add('cart-item');
+        itemElement.innerHTML = `
+            <img src="images/${item.image_url}" alt="${item.name}">
+            <div class="item-details">
+                <h5>${item.name}</h5>
+                <p>Price: $${Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
+                <p>Quantity: ${item.quantity}</p>
+                <button class="btn" onclick="removeFromCart(${item.id})">Remove</button>
+            </div>
+        `;
+        cartItemsContainer.appendChild(itemElement);
+        totalAmount += Number(item.price) * item.quantity;
+    });
+
+    cartTotal.innerHTML = `<h4>Total: $${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>`;
+    document.getElementById('checkout-btn').disabled = false;
+}
+  function removeFromCart(itemId) {
+      cart = cart.filter(item => item.id !== itemId);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      displayCartItems();
+      updateCartCount();
+  }
+
+  document.addEventListener('DOMContentLoaded', displayCartItems);
+</script>
+
+</body>
+</html>

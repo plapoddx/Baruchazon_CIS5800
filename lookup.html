@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Find Your Order - Baruchazon</title>
+  <link rel="icon" type="image/x-icon" href="Baruchazon.png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="project.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f5f5;
+    }
+
+    main {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 50px 20px;
+    }
+
+    .lookup-card {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 550px;
+      animation: fadeIn 0.8s ease-out;
+    }
+
+    .lookup-card h1 {
+      text-align: center;
+      color: #0b1a33;
+      font-weight: 700;
+      margin-bottom: 25px;
+      font-size: 30px;
+    }
+
+    .btn-primary {
+      background-color: #0b1a33;
+      border-color: #0b1a33;
+      width: 100%;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-top: 20px;
+    }
+
+    .btn-primary:hover {
+      background-color: #143766;
+      border-color: #143766;
+    }
+
+    footer {
+      background-color: #0b1a33;
+      color: white;
+      text-align: center;
+      padding: 20px;
+      margin-top: 50px;
+      font-size: 14px;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Order Result Styling */
+    #order-result {
+      margin-top: 30px;
+      display: none;
+    }
+
+    .order-summary {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 25px;
+      margin-top: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      text-align: left;
+    }
+
+    .order-summary h3 {
+      font-weight: 600;
+      color: #0b1a33;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    table.table {
+      margin-top: 20px;
+    }
+
+    .table thead th {
+      background-color: #e9f1f7;
+      color: #0b1a33;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+    }
+
+    .table tbody td {
+      vertical-align: middle;
+    }
+
+    .table tfoot td {
+      font-weight: bold;
+      font-size: 16px;
+      background-color: #d1ecf1;
+      color: #0b1a33;
+    }
+  </style>
+</head>
+
+<body>
+<div id="navbar"></div>
+<script>
+fetch('navbar.html')
+.then(response => response.text())
+.then(data => { document.getElementById('navbar').innerHTML = data; });
+</script>
+
+<main>
+  <div class="lookup-card">
+    <h1>🔎 Find Your Order</h1>
+    <form id="lookup-form">
+      <div class="form-group">
+        <label for="confirmationNumber">Confirmation Number</label>
+        <input type="text" id="confirmationNumber" class="form-control" placeholder="e.g., BZ-12345" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Lookup Order</button>
+    </form>
+
+    <div id="order-result" class="order-summary">
+      <h3>Receipt: Your Order Details</h3>
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody id="order-items"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" class="text-right">Total</td>
+            <td id="order-total"></td>
+          </tr>
+        </tfoot>
+      </table>
+      <text>For Order Cancellation. Please Contact: <b>supports@baruchazon.com</b></text>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2025 Baruchazon. All rights reserved.</p>
+</footer>
+
+<script>
+document.getElementById('lookup-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const confirmationNumber = document.getElementById('confirmationNumber').value;
+    const email = document.getElementById('email').value;
+
+    fetch('http://localhost:3000/api/orders/lookup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ confirmationNumber, email })
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Order not found');
+      return response.json();
+    })
+    .then(order => {
+      const orderItemsContainer = document.getElementById('order-items');
+      const totalDisplay = document.getElementById('order-total');
+      let total = 0;
+
+      orderItemsContainer.innerHTML = '';
+
+      order.items.forEach(item => {
+        const subtotal = parseFloat(item.price) * item.quantity;
+        total += subtotal;
+        const row = `
+          <tr>
+            <td>${item.product_name}</td>
+            <td>${item.quantity}</td>
+            <td>$${parseFloat(item.price).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+            <td>$${subtotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+          </tr>
+        `;
+        orderItemsContainer.innerHTML += row;
+      });
+
+      totalDisplay.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2 })
+}`;
+      document.getElementById('order-result').style.display = 'block';
+    })
+    .catch(err => {
+      console.error('Lookup error:', err);
+      alert('Order not found! Please double-check your information.');
+      document.getElementById('order-result').style.display = 'none';
+    });
+});
+</script>
+
+</body>
+</html>

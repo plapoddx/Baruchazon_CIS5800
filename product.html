@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Product Detail - Baruchazon</title>
+  <link rel="stylesheet" href="project.css">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    .product-page {
+      display: flex;
+      max-width: 1200px;
+      margin: 50px auto;
+      gap: 50px;
+      padding: 20px;
+      background: white;
+      border-radius: 8px;
+    }
+    .product-image {
+      flex: 1;
+    }
+    .product-image img {
+      width: 100%;
+      border-radius: 8px;
+      object-fit: cover;
+    }
+    .product-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .product-name {
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+    .product-brand {
+      font-size: 20px;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .product-price {
+      font-size: 24px;
+      color: #4dabf7;
+      margin-bottom: 20px;
+    }
+    .product-description {
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+    .add-to-cart {
+      background-color: #081a35;
+      color: white;
+      font-size: 18px;
+      padding: 15px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 20px;
+    }
+    .add-to-cart:hover {
+      background-color: #0b244b;
+    }
+  </style>
+</head>
+<body>
+
+<div id="navbar"></div>
+<script>
+fetch('navbar.html')
+  .then(response => response.text())
+  .then(data => document.getElementById('navbar').innerHTML = data);
+</script>
+
+<main>
+  <div class="product-page" id="product-container">
+  </div>
+</main>
+
+<footer>
+  <p style="text-align:center;">&copy; 2025 Baruchazon. All rights reserved.</p>
+</footer>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const productId = params.get('id');
+  fetch(`http://localhost:3000/api/products/${productId}`)
+    .then(response => response.json())
+    .then(product => {
+      const container = document.getElementById('product-container');
+      container.innerHTML = `
+        <div class="product-image">
+          <img src="images/${product.image_url}" alt="${product.name}">
+        </div>
+        <div class="product-details">
+          <div class="product-brand">${product.category}</div>
+          <div class="product-name">${product.name}</div>
+          <div class="product-rating">
+  ${'★'.repeat(Math.floor(Number(product.rating)))}${'☆'.repeat(5 - Math.floor(Number(product.rating)))} 
+  <span style="margin-left:1px; font-weight: 800; font-size: 18px; color: #555;">
+    ${Number(product.rating).toFixed(1)}
+  </span>
+</div>
+          <div class="product-price">$${Number(product.price).toFixed(2)}</div>
+          <div class="product-description">
+            ${product.description}
+          </div>
+          <button class="add-to-cart" id="add-to-cart-btn">Add to Cart</button>
+        </div>
+      `;
+      const addToCartButton = document.getElementById('add-to-cart-btn');
+      addToCartButton.addEventListener('click', () => {
+        addToCart(product);
+      });
+    })
+    .catch(error => console.error('Error loading product:', error));
+
+function addToCart(product) {
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
+  const existingProduct = cart.find(item => item.id === product.id);
+  if (existingProduct) {
+    existingProduct.quantity += 1;
+  } else {
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image_url: product.image_url,
+      quantity: 1
+    });
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  alert('Added to cart!');
+}
+</script>
+</body>
+
+<div id="navbar"></div>
+
+<script>
+  fetch('navbar.html')
+    .then(response => response.text())
+    .then(data => {
+      document.getElementById('navbar').innerHTML = data;
+      updateCartCount();
+    });
+
+  function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+    const cartCountElement = document.getElementById('cart-count');
+    if (cartCountElement) {
+      cartCountElement.textContent = totalItems;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateCartCount();
+  });
+</script>
+</html>
