@@ -36,3 +36,9 @@ CREATE TABLE order_items (
   price DECIMAL(10,2),
   FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
 );
+
+ALTER TABLE orders 
+  ADD COLUMN shipping_method VARCHAR(50),
+  ADD COLUMN shipping_cost DECIMAL(10,2),
+  ADD COLUMN tax DECIMAL(10,2),
+  ADD COLUMN total DECIMAL(10,2);
