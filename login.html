@@ -65,7 +65,7 @@
   <script>
     document.getElementById("login-form").addEventListener("submit", async function (e) {
       e.preventDefault();
-      const res = await fetch("http://localhost:3000/api/admin-login", {
+      const res = await fetch("https://api-baruchazon-server.onrender.com/api/admin-login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
