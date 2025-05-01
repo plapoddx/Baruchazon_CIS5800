@@ -2,8 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Admin Panel - Baruchazon</title>
+  <title>Admin Reports - Baruchazon</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="project.css">
   <style>
     body {
@@ -11,11 +12,9 @@
       font-family: 'Poppins', sans-serif;
       padding-top: 70px;
     }
-
     .container {
       max-width: 1100px;
     }
-
     .admin-header {
       background: linear-gradient(rgba(11,26,51,0.8), rgba(11,26,51,0.8)), url('admin-hero.jpg') center/cover no-repeat;
       color: white;
@@ -25,69 +24,13 @@
       margin-bottom: 30px;
       animation: fadeInDown 1s ease-out;
     }
-
-    .search-bar, .sort-bar {
-      margin-bottom: 20px;
-    }
-
-    .order-card {
+    .chart-container {
+      margin-bottom: 40px;
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      padding: 20px;
-      margin-bottom: 30px;
-      transition: transform 0.2s;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
     }
-
-    .order-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .order-header {
-      font-size: 20px;
-      font-weight: 700;
-      color: #0b1a33;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .order-info p {
-      margin: 5px 0;
-      font-size: 15px;
-    }
-
-    .order-info strong {
-      color: #0b1a33;
-    }
-
-    .order-table th {
-      background-color: #e9f1f7;
-      color: #0b1a33;
-    }
-
-    .table-total {
-      background-color: #d1ecf1;
-      font-weight: bold;
-      color: #0b1a33;
-    }
-
-    .btn-danger, .btn-primary {
-      font-size: 14px;
-      padding: 6px 12px;
-      border-radius: 20px;
-    }
-
-    .status-select {
-      border-radius: 20px;
-      padding: 5px 10px;
-      font-size: 14px;
-      background: #e9f1f7;
-      color: #0b1a33;
-      border: none;
-    }
-
     footer {
       background-color: #0b1a33;
       color: white;
@@ -96,218 +39,344 @@
       margin-top: 40px;
       font-size: 14px;
     }
-
-    #loading {
-      text-align: center;
-      margin-top: 50px;
-    }
-
-    @keyframes fadeInDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .card {
+  background: #ffffff;
+  border-radius: 12px;
+  border: none;
+}
+h5 {
+  font-weight: 600;
+  color: #0b1a33;
+}
   </style>
 </head>
+
+<body>
+<script>
+  if (!localStorage.getItem('admin-auth')) {
+    alert("You must be logged in to access this page.");
+    window.location.href = "login.html";
+  }
+</script>
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
   <div class="container">
     <div class="collapse navbar-collapse" id="adminNav">
       <ul class="navbar-nav ml-auto">
+        <li class="nav-item"><a class="nav-link" href="admin.html">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link" href="admin-product.html">Products Management</a></li>
-        <li class="nav-item"><a class="nav-link" href="admin.html">Order Dashboard</a></li>
-        <button class="btn btn-outline-light ml-3" onclick="logout()">Logout</button>
-</li>
+        <li class="nav-item"><a class="nav-link" href="admin-order.html">Order Dashboard</a></li>
+        <li class="nav-item">
+          <button class="btn btn-outline-light ml-3" onclick="logout()">Logout</button>
+        </li>
       </ul>
     </div>
   </div>
 </nav>
-<body>
-  <script>
-    // Redirect if not logged in
-    if (!localStorage.getItem('admin-auth')) {
-      alert("You must be logged in to access this page.");
-      window.location.href = "login.html";
-    }
-  </script>
 <div class="container">
-  <div class="admin-header">
-    <h1>Order Management</h1>
-    <p>Manage your customer orders below!</p>
-  </div>
-
-  <div class="d-flex justify-content-between mb-4">
-    <input id="search-bar" class="form-control w-50 search-bar" type="text" placeholder="🔎 Search by Customer Name..." oninput="filterOrders()">
-    
-    <select id="sort-bar" class="form-control w-25 sort-bar" onchange="sortOrders()">
-      <option value="newest">Newest First</option>
-      <option value="oldest">Oldest First</option>
-      <option value="pending">Pending</option>
-      <option value="shipped">Shipped</option>
-      <option value="delivered">Delivered</option>
-    </select>
-  </div>
-
-  <div id="loading">
-    <div class="spinner-border text-primary" role="status">
-      <span class="sr-only">Loading...</span>
+    <div class="admin-header text-center mb-4">
+      <h1>Sales Dashboard</h1>
+      <p>Visual reports and actionable business insights</p>
     </div>
-  </div>
 
-  <div id="order-list"></div>
-</div>
+      <div class="container">
+        <div class="row">
+            <div class="container my-4">
+                <div class="row" id="kpi-metrics">
+                </div>
+              </div>
+
+        
+          <!-- Monthly Revenue -->
+          <div class="col-lg-6 col-md-6 mb-4">
+            <div class="card shadow-sm p-3">
+              <h5 class="text-center">Monthly Revenue</h5>
+              <canvas id="salesChart" height="180"></canvas>
+            </div>
+          </div>
+      
+          <!-- Avg Order Value -->
+          <div class="col-lg-6 col-md-6 mb-4">
+            <div class="card shadow-sm p-3">
+              <h5 class="text-center">Avg Order Value</h5>
+              <canvas id="avgOrderChart" height="180"></canvas>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow-sm p-3 h-100">
+              <h5 class="text-center mb-3">Top Products</h5>
+              <ul id="topProductsList" class="list-group list-group-flush small"></ul>
+            </div>
+          </div>
+          <!-- Orders by Day -->
+          <div class="col-lg-5 col-md-10 mb-6">
+            <div class="card shadow-sm p-3">
+              <h5 class="text-center">Daily Orders</h5>
+              <canvas id="dailyOrdersChart" height="180"></canvas>
+            </div>
+          </div>
+                    <!-- Order Status -->
+                    <div class="col-lg-4 col-md-6 mb-4">
+                        <div class="card shadow-sm p-3">
+                          <h5 class="text-center">Order Status</h5>
+                          <canvas id="statusChart" height="180"></canvas>
+                        </div>
+                      </div>
+        </div>
+      </div>
+
 
 <footer>
   <p>&copy; 2025 Baruchazon Admin</p>
 </footer>
 
 <script>
-let allOrders = [];
-
-function deleteOrder(orderId) {
-  if (confirm('Are you sure you want to delete this order?')) {
-    fetch(`https://api-baruchazon-server.onrender.com/api/orders/${orderId}`, { method: 'DELETE' })
-    .then(res => {
-      if (!res.ok) throw new Error('Delete failed');
-      alert('Order DELETED successfully');
-      location.reload();
-    })
-    .catch(() => alert('Delete FAILED'));
-  }
+function logout() {
+  localStorage.removeItem('admin-auth');
+  window.location.href = "login.html";
 }
 
-function updateStatus(orderId) {
-  const newStatus = document.getElementById(`status-${orderId}`).value;
-  fetch(`https://api-baruchazon-server.onrender.com/api/orders/${orderId}/status`, {
-    method: 'PUT',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ status: newStatus })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error('Failed');
-    alert('Status updated OK');
-  })
-  .catch(() => alert('FAILED updating status'));
-}
-
-function filterOrders() {
-  const search = document.getElementById('search-bar').value.toLowerCase();
-  const filtered = allOrders.filter(order => order.name.toLowerCase().includes(search));
-  renderOrders(filtered);
-}
-
-function sortOrders() {
-  const sortType = document.getElementById('sort-bar').value;
-  let sorted = [...allOrders];
-
-  if (sortType === 'newest') {
-    sorted.sort((a, b) => b.order_id - a.order_id);
-  } else if (sortType === 'oldest') {
-    sorted.sort((a, b) => a.order_id - b.order_id);
-  } else {
-    sorted = sorted.filter(order => order.status.toLowerCase() === sortType);
-  }
-
-  renderOrders(sorted);
-}
-
-function renderOrders(data) {
-  const container = document.getElementById('order-list');
-  container.innerHTML = '';
-
-  if (data.length === 0) {
-    container.innerHTML = '<p class="text-center text-muted">NO orders found.</p>';
-    return;
-  }
-
-  data.forEach(order => {
-    const subTotal = order.items.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
-    const tax = subTotal * 0.08875; // NYC example
-    const shipping = order.shippingCost ? parseFloat(order.shippingCost) : 0;
-    const total = subTotal + tax + shipping;
-    const rows = order.items.map(item => `
-      <tr>
-        <td>${item.product_name}</td>
-        <td>${item.quantity}</td>
-        <td>$${parseFloat(item.price).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-      </tr>`).join('');
-
-    const card = document.createElement('div');
-    card.className = 'order-card';
-    card.innerHTML = `
-      <div class="order-header">
-        <div>Order #${order.order_id} - ${order.name}</div>
-      </div>
-      <div class="order-info">
-        <p><strong>Email:</strong> ${order.email}</p>
-        <p><strong>Phone:</strong> ${order.phone}</p>
-        <p><strong>Shipping:</strong> ${order.address}</p>
-        <p><strong>Delivery Date:</strong> ${order.delivery_date}</p>
-        <p><strong>Status:</strong> 
-          <select class="status-select" id="status-${order.order_id}" onchange="updateStatus(${order.order_id})">
-            <option ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
-            <option ${order.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-            <option ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-            <option ${order.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-          </select>
-        </p>
-      </div>
-      <table class="table table-bordered order-table">
-        <thead>
-          <tr>
-            <th>Item</th>
-            <th>Qty</th>
-            <th>Price</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rows}
-<tr class="table-total text-right">
-  <td colspan="2">Subtotal</td>
-  <td>$${subTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-</tr>
-<tr class="table-total text-right">
-  <td colspan="2">Tax (8.875%)</td>
-  <td>$${tax.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-</tr>
-<tr class="table-total text-right">
-  <td colspan="2">Shipping</td>
-  <td>$${shipping.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-</tr>
-<tr class="table-total text-right">
-  <td colspan="2">Total</td>
-  <td>$${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
-</tr>
-        </tbody>
-      </table>
-    `;
-    container.appendChild(card);
-  });
-}
-
-// Initial Fetch
 fetch('https://api-baruchazon-server.onrender.com/api/orders-with-items')
   .then(res => res.json())
   .then(data => {
-    document.getElementById('loading').style.display = 'none';
-    allOrders = data;
-    renderOrders(data);
+    const monthlyTotals = {};
+    const productSales = {};
+    const statusCounts = { Pending: 0, Shipped: 0, Delivered: 0, Cancelled: 0 };
+
+    data.forEach(order => {
+      const month = new Date(order.delivery_date).toLocaleString('default', { month: 'short', year: 'numeric' });
+      if (!monthlyTotals[month]) monthlyTotals[month] = 0;
+
+      const orderTotal = order.items.reduce((sum, item) => {
+        const revenue = item.price * item.quantity;
+        productSales[item.product_name] = (productSales[item.product_name] || 0) + item.quantity;
+        return sum + revenue;
+      }, 0);
+
+      monthlyTotals[month] += orderTotal;
+      statusCounts[order.status] = (statusCounts[order.status] || 0) + 1;
+    });
+
+    // Monthly Revenue
+    new Chart(document.getElementById('salesChart'), {
+      type: 'bar',
+      data: {
+        labels: Object.keys(monthlyTotals),
+        datasets: [{
+          label: 'Revenue ($)',
+          data: Object.values(monthlyTotals),
+          backgroundColor: '#0b1a33'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    // Top Products Chart
+    const topProducts = Object.entries(productSales)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+
+    new Chart(document.getElementById('topProductsChart'), {
+      type: 'bar',
+      data: {
+        labels: topProducts.map(p => p[0]),
+        datasets: [{
+          label: 'Units Sold',
+          data: topProducts.map(p => p[1]),
+          backgroundColor: '#007bff'
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+    // Order Status Pie Chart
+    new Chart(document.getElementById('statusChart'), {
+      type: 'pie',
+      data: {
+        labels: Object.keys(statusCounts),
+        datasets: [{
+          label: 'Order Status',
+          data: Object.values(statusCounts),
+          backgroundColor: ['#ffc107', '#17a2b8', '#28a745', '#dc3545']
+        }]
+      },
+      options: {
+        responsive: true
+      }
+    });
+
   })
   .catch(err => {
     console.error(err);
-    document.getElementById('loading').innerHTML = '<p class="text-danger">Failed to load orders. Please Check Database Connection or Console.</p>';
+    alert("Failed to load report data.");
   });
 
-  if (order.status === 'Cancelled') {
-  card.style.opacity = 0.6;
-}
-  function logout() {
-    localStorage.removeItem('admin-auth');
-    window.location.href = 'login.html';
-  }
+fetch('https://api-baruchazon-server.onrender.com/api/orders-with-items')
+  .then(res => res.json())
+  .then(data => {
+    const monthlyTotals = {};
+    const orderCounts = {};
+    const dailyOrders = {};
+    const productSales = {};
+    const categoryCounts = {};
 
-  if (!localStorage.getItem('admin-auth')) {
-    const logoutBtn = document.querySelector('.logout-btn');
-    if (logoutBtn) logoutBtn.style.display = 'none';
-  }
+    data.forEach(order => {
+      const dateObj = new Date(order.delivery_date);
+      const month = dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
+      const day = dateObj.toISOString().split('T')[0];
+
+      const orderTotal = order.items.reduce((sum, item) => {
+        productSales[item.product_name] = (productSales[item.product_name] || 0) + item.quantity;
+        categoryCounts[item.category] = (categoryCounts[item.category] || 0) + item.quantity;
+        return sum + item.price * item.quantity;
+      }, 0);
+
+      monthlyTotals[month] = (monthlyTotals[month] || 0) + orderTotal;
+      orderCounts[month] = (orderCounts[month] || 0) + 1;
+      dailyOrders[day] = (dailyOrders[day] || 0) + 1;
+    });
+
+    // Average Order Value
+    const avgLabels = Object.keys(monthlyTotals);
+    const avgData = avgLabels.map(m => (monthlyTotals[m] / orderCounts[m]).toFixed(2));
+    new Chart(document.getElementById('avgOrderChart'), {
+      type: 'line',
+      data: {
+        labels: avgLabels,
+        datasets: [{
+          label: 'Avg Order ($)',
+          data: avgData,
+          backgroundColor: '#5e72e4',
+          borderColor: '#5e72e4',
+          fill: false
+        }]
+      }
+    });
+
+    // Daily Orders
+    const dailyLabels = Object.keys(dailyOrders).sort();
+    const dailyData = dailyLabels.map(d => dailyOrders[d]);
+    new Chart(document.getElementById('dailyOrdersChart'), {
+      type: 'line',
+      data: {
+        labels: dailyLabels,
+        datasets: [{
+          label: 'Orders per Day',
+          data: dailyData,
+          backgroundColor: '#11cdef',
+          borderColor: '#11cdef',
+          fill: false
+        }]
+      }
+    });
+
+  })
+  .catch(err => {
+    console.error(err);
+    alert("Failed to load extended analytics.");
+  });
+
+fetch('https://api-baruchazon-server.onrender.com/api/orders-with-items')
+  .then(res => res.json())
+  .then(data => {
+    const kpiContainer = document.getElementById('kpi-metrics');
+
+    let totalRevenue = 0;
+    let totalOrders = data.length;
+    let totalProducts = 0;
+    let customers = new Set();
+    let thisWeekOrders = 0;
+    let totalDeliveryTime = 0;
+    let deliveredCount = 0;
+
+    const now = new Date();
+    const weekAgo = new Date();
+    weekAgo.setDate(now.getDate() - 7);
+
+    data.forEach(order => {
+      const orderDate = new Date(order.delivery_date);
+      if (orderDate >= weekAgo) thisWeekOrders++;
+
+      customers.add(order.email);
+      order.items.forEach(item => {
+        totalRevenue += item.price * item.quantity;
+        totalProducts += item.quantity;
+      });
+
+      const placedDate = new Date(order.placed_date || order.created_at || orderDate);
+      if (!isNaN(placedDate.getTime()) && !isNaN(orderDate.getTime())) {
+        totalDeliveryTime += (orderDate - placedDate) / (1000 * 60 * 60 * 24); // in days
+        deliveredCount++;
+      }
+    });
+
+    const avgDelivery = deliveredCount ? (totalDeliveryTime / deliveredCount).toFixed(1) : "N/A";
+
+    const metrics = [
+      { label: 'Total Revenue', value: `$${totalRevenue.toLocaleString('en-US', {minimumFractionDigits: 2})}` },
+      { label: 'Total Orders', value: totalOrders },
+      { label: 'Unique Customers', value: customers.size },
+      { label: 'Orders This Week', value: thisWeekOrders },
+      { label: 'Products Sold', value: totalProducts },
+      { label: 'Avg. Delivery Time (days)', value: avgDelivery }
+    ];
+
+    metrics.forEach(metric => {
+      const col = document.createElement('div');
+      col.className = 'col-lg-4 col-md-6 mb-4';
+      col.innerHTML = `
+        <div class="card bg-light shadow-sm p-3 text-center">
+          <h6 class="text-muted">${metric.label}</h6>
+          <h3 class="text-dark font-weight-bold">${metric.value}</h3>
+        </div>
+      `;
+      kpiContainer.appendChild(col);
+    });
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById('kpi-metrics').innerHTML = '<p class="text-danger">Failed to load KPIs.</p>';
+  });
+  fetch('https://api-baruchazon-server.onrender.com/api/orders-with-items')
+  .then(res => res.json())
+  .then(data => {
+    const productCountMap = {};
+
+    data.forEach(order => {
+      order.items.forEach(item => {
+        if (!productCountMap[item.product_name]) {
+          productCountMap[item.product_name] = 0;
+        }
+        productCountMap[item.product_name] += item.quantity;
+      });
+    });
+
+    const sortedProducts = Object.entries(productCountMap)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5); // Top 5
+
+    const list = document.getElementById('topProductsList');
+    sortedProducts.forEach(([name, qty], index) => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+      li.innerHTML = `<span>${index + 1}. ${name}</span> <span class="badge badge-primary badge-pill">${qty}</span>`;
+      list.appendChild(li);
+    });
+  })
+  .catch(err => {
+    console.error(err);
+    document.getElementById('topProductsList').innerHTML = '<li class="list-group-item text-danger">Failed to load products.</li>';
+  });
 </script>
 
 </body>
