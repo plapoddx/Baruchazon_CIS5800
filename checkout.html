@@ -281,7 +281,7 @@ document.getElementById("checkout-form").addEventListener("submit", function(eve
     const deliveryDate = new Date();
     deliveryDate.setDate(deliveryDate.getDate() + randomDays);
 
-    fetch('https://api-baruchazon-server.onrender.com//api/orders', {
+    fetch('https://api-baruchazon-server.onrender.com/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -362,6 +362,7 @@ document.getElementById("checkout-form").addEventListener("submit", function(eve
 
   // Update cart items when shipping method changes
   document.getElementById('shippingMethod').addEventListener('change', displayCartItems);
+  
 </script>
 
 </body>

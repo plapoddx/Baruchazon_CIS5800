@@ -154,31 +154,11 @@
     <h1>Your Cart</h1>
     <div id="cart-items" class="mt-4"></div>
     <div id="cart-total" class="text-right my-4"></div>
-    <button class="btn btn-primary" id="checkout-btn" data-toggle="modal" data-target="#checkoutModal" disabled>Proceed to Checkout</button>
-</main>
+    <button class="btn btn-primary" id="checkout-btn" disabled onclick="window.location.href='checkout.html'">Proceed to Checkout</button></main>
 
 <footer>
     <p>&copy; 2025 Baruchazon. All rights reserved.</p>
 </footer>
-
-<div class="modal fade" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-      <div class="modal-content">
-          <div class="modal-header">
-              <h5 class="modal-title" id="checkoutModalLabel">Confirmation</h5>
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
-          </div>
-          <div class="modal-body">
-              <p>Would you like to checkout now?</p>
-              <div class="btn-group d-flex justify-content-around">
-                  <a href="guest.html" class="btn btn-primary">Continue</a>
-              </div>
-          </div>
-      </div>
-  </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -226,16 +206,20 @@
             <div class="item-details">
                 <h5>${item.name}</h5>
                 <p>Price: $${Number(item.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>
-                <p>Quantity: ${item.quantity}</p>
-                <button class="btn" onclick="removeFromCart(${item.id})">Remove</button>
-            </div>
+               <div class="d-flex align-items-center justify-content-between">
+  <div>
+    <button class="btn btn-sm btn-outline-secondary mr-2" onclick="updateQuantity(${item.id}, -1)">-</button>
+    <span class="mx-2"; font-weight: bold;">${item.quantity}</span>
+    <button class="btn btn-sm btn-outline-secondary ml-2" onclick="updateQuantity(${item.id}, 1)">+</button>
+  </div>
+  <button class="btn" style="background-color: #ff4d4d; color: white;" onclick="removeFromCart(${item.id})">Remove</button>
+</div>
         `;
         cartItemsContainer.appendChild(itemElement);
         totalAmount += Number(item.price) * item.quantity;
     });
 
-    cartTotal.innerHTML = `<h4>Total: $${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>`;
-    document.getElementById('checkout-btn').disabled = false;
+    cartTotal.innerHTML = `<h4 style="text-align:center; font-weight:bold;">Subtotal: $${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</h4>`;    document.getElementById('checkout-btn').disabled = false;
 }
   function removeFromCart(itemId) {
       cart = cart.filter(item => item.id !== itemId);
@@ -243,6 +227,15 @@
       displayCartItems();
       updateCartCount();
   }
+  function updateQuantity(itemId, change) {
+  const item = cart.find(i => i.id === itemId);
+  if (!item) return;
+  item.quantity += change;
+  if (item.quantity < 1) item.quantity = 1;
+  localStorage.setItem('cart', JSON.stringify(cart));
+  displayCartItems();
+  updateCartCount();
+}
 
   document.addEventListener('DOMContentLoaded', displayCartItems);
 </script>
