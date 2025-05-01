@@ -75,16 +75,15 @@
 <body>
 
 <div class="receipt-container">
-  <h1>Thank You for Your Purchase!</h1>
+  <h1>Thank You for Your Purchase, <strong id="customerName"></strong>!</h1>
   <p id="customer-name"></p>
-  <p>Confirmation Number:</p>
-  <p id="confirmation-number" class="highlight" style="font-size: 20px;"></p>
-  <p>Amount Paid:</p>
-  <p id="amount-spent" class="highlight" style="font-size: 20px;"></p>
-  <p>Shipping Address:</p>
-  <p id="shipping-address" class="highlight"></p>
-  <p>Estimated Delivery:</p>
-  <p id="delivery-date" class="highlight"></p>
+  <p class="text-center">Your order <strong id="orderId"></strong> will arrive by <span id="deliveryDate"></span>.</p>
+  <div class="summary">
+    <p><strong>Shipping Method:</strong> <span id="shippingMethod"></span></p>
+    <p><strong>Shipping Cost:</strong> $<span id="shippingCost"></span></p>
+    <p><strong>Tax:</strong> $<span id="tax"></span></p>
+    <p><strong>Total:</strong> $<span id="total"></span></p>
+  </div>
 
   <div class="mt-4">
     <a href="index.html" class="btn btn-primary btn-home">Continue Shopping</a>
@@ -97,23 +96,13 @@
   const cart = JSON.parse(localStorage.getItem('cartSnapshot')) || [];
 
   if (order) {
-    document.getElementById('customer-name').textContent = `Hi ${order.firstName} ${order.lastName},`;
-    document.getElementById('shipping-address').textContent = `${order.address}, ${order.city}, ${order.zipcode}`;
-    document.getElementById('delivery-date').textContent = order.deliveryDate;
-    document.getElementById('confirmation-number').textContent = `#${order.confirmationNumber}`;
-
-    // Calculate total amount
-    let total = 0;
-    if (cart.length > 0) {
-      total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    }
-    document.getElementById('amount-spent').textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-  } else {
-    document.querySelector('.receipt-container').innerHTML = `
-      <h1>Oops!</h1>
-      <p>No recent order found.</p>
-      <a href="index.html" class="btn btn-secondary btn-home">Back to Home</a>
-    `;
+    document.getElementById('customerName').textContent = order.firstName + ' ' + order.lastName;
+    document.getElementById('orderId').textContent = order.confirmationNumber;
+    document.getElementById('deliveryDate').textContent = order.deliveryDate;
+    document.getElementById('shippingMethod').textContent = order.shippingMethod;
+    document.getElementById('shippingCost').textContent = order.shippingCost;
+    document.getElementById('tax').textContent = order.tax;
+    document.getElementById('total').textContent = order.total;
   }
 
   function cancelOrder() {

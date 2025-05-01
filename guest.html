@@ -74,6 +74,16 @@
       margin-top: 50px;
       font-size: 14px;
     }
+    .content-card {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(244, 171, 171, 0.05);
+  margin-bottom: 20px;
+}
+.container {
+  max-width: 1200px; /* or try 100% for full width */
+}
   </style>
 </head>
 
@@ -86,72 +96,95 @@
     .then(response => response.text())
     .then(data => { document.getElementById('navbar').innerHTML = data; });
 </script>
+<main class="container my-5">
+  <div class="row">
+    <!-- Checkout Form - Now on the Left -->
+    <div class="col-md-6">
+      <h1>Guest Checkout</h1>
+      <form id="checkout-form">
+        <h3>Personal Information</h3>
+        <div class="form-group">
+          <label for="firstName">First Name</label>
+          <input type="text" class="form-control" id="firstName" required>
+        </div>
+        <div class="form-group">
+          <label for="lastName">Last Name</label>
+          <input type="text" class="form-control" id="lastName" required>
+        </div>
 
-<div class="container">
-  <h1>Guest Checkout</h1>
+        <h3>Contact Information</h3>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" class="form-control" id="email" required>
+        </div>
+        <div class="form-group">
+          <label for="phone_number">Phone Number</label>
+          <input type="text" class="form-control" id="phone_number" required>
+        </div>
 
-  <form id="checkout-form">
-    <h3>Personal Information</h3>
-    <div class="form-group">
-      <label for="firstName">First Name</label>
-      <input type="text" class="form-control" id="firstName" required>
-    </div>
-    <div class="form-group">
-      <label for="lastName">Last Name</label>
-      <input type="text" class="form-control" id="lastName" required>
-    </div>
-    <h3>Contact Information</h3>
-    <div class="form-group">
-      <label for="email">Email Address</label>
-      <input type="email" class="form-control" id="email" required>
-    </div>
-    <div class="form-group">
-      <label for="phone_number">Phone Number</label>
-      <input type="text" class="form-control" id="phone_number" required>
+        <h3>Shipping Information</h3>
+        <div class="form-group">
+          <label for="address">Street Address</label>
+          <input type="text" class="form-control" id="address" required>
+        </div>
+        <div class="form-group">
+          <label for="city">City</label>
+          <input type="text" class="form-control" id="city" required>
+        </div>
+        <div class="form-group">
+          <label for="zipcode">Zip Code</label>
+          <input type="text" class="form-control" id="zipcode" required>
+        </div>
+
+        <h3>Shipment Method</h3>
+        <div class="form-group">
+          <label for="shippingMethod">Shipping Method</label>
+          <select id="shippingMethod" class="form-control" required>
+            <option value="standard" data-cost="15.00">Standard (3–5 days) – $15.00</option>
+            <option value="express" data-cost="35.00">Express (1–2 days) – $35.00</option>
+            <option value="overnight" data-cost="75.00">Overnight – $75.00</option>
+          </select>
+        </div>
+        <h3>Payment Information</h3>
+
+        <div class="form-group">
+          <label for="paymentMethod">Payment Method</label>
+          <select class="form-control" id="paymentMethod" required>
+            <option value="">Select Method</option>
+            <option value="visa">Visa</option>
+            <option value="mastercard">MasterCard</option>
+            <option value="amex">American Express</option>
+            <option value="discover">Discover</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="cardNumber">Card Number</label>
+          <input type="text" class="form-control" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" required>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="expiryDate">Expiry Date (MM/YY)</label>
+            <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5" required>
+          </div>
+          <div class="form-group col-md-6">
+            <label for="cvv">CVV</label>
+            <input type="text" class="form-control" id="cvv" placeholder="CVV" maxlength="4" required>
+          </div>
+          
+        </div>
+      <button type="submit" class="btn btn-primary btn-block">Complete Purchase</button>
+      </form>
     </div>
 
-    <h3>Shipping Information</h3>
-    <div class="form-group">
-      <label for="address">Street Address</label>
-      <input type="text" class="form-control" id="address" required>
+    <div class="col-md-6">
+      <h1>Your Cart</h1>
+      <div id="cart-items" class="mt-4"></div>
+      <div id="cart-total" class="text-right my-4"></div>
     </div>
-    <div class="form-group">
-      <label for="city">City</label>
-      <input type="text" class="form-control" id="city" required>
-    </div>
-    <div class="form-group">
-      <label for="zipcode">Zip Code</label>
-      <input type="text" class="form-control" id="zipcode" required>
-    </div>
-
-    <h3>Payment Information</h3>
-    <div class="form-group">
-      <label for="paymentMethod">Payment Method</label>
-      <select class="form-control" id="paymentMethod" required>
-        <option value="">Select Method</option>
-        <option value="visa">Visa</option>
-        <option value="mastercard">MasterCard</option>
-        <option value="amex">American Express</option>
-        <option value="discover">Discover</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label for="cardNumber">Card Number</label>
-      <input type="text" class="form-control" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX" required>
-    </div>
-    <div class="form-group">
-      <label for="expiryDate">Expiry Date (MM/YY)</label>
-      <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" required>
-    </div>
-    <div class="form-group">
-      <label for="cvv">CVV</label>
-      <input type="text" class="form-control" id="cvv" placeholder="CVV" required>
-    </div>
-
-    <button type="submit" class="btn btn-primary btn-block">Complete Purchase</button>
-  </form>
-</div>
-
+  </div>
+</main>
 <footer>
   &copy; 2025 Baruchazon. All rights reserved.
 </footer>
@@ -161,80 +194,174 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
-  document.getElementById("checkout-form").addEventListener("submit", function(event) {
-    event.preventDefault();
+  
+  // Load cart items from localStorage
+  let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-    const firstName = document.getElementById("firstName").value;
-    const lastName = document.getElementById("lastName").value;
-    const email = document.getElementById("email").value;
-    const phone_number = document.getElementById("phone_number").value;
-    const address = document.getElementById("address").value;
-    const city = document.getElementById("city").value;
-    const zipcode = document.getElementById("zipcode").value;
-    const paymentMethod = document.getElementById("paymentMethod").value;
-    const cardNumber = document.getElementById("cardNumber").value;
-    const expiryDate = document.getElementById("expiryDate").value;
-    const cvv = document.getElementById("cvv").value;
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  function displayCartItems() {
+  const cartItemsContainer = document.getElementById('cart-items');
+  const cartTotal = document.getElementById('cart-total');
+  let subTotal = 0;
+  let totalTax = 0;
+  let shippingMethod = parseFloat(document.getElementById('shippingMethod').selectedOptions[0].dataset.cost);
+  cartItemsContainer.innerHTML = '';
 
-    if (!cart.length) {
-      alert("Your cart is empty.");
-      return;
-    }
+  if (!cart.length) {
+    cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+    cartTotal.innerHTML = '';
+    return;
+  }
 
-    if (firstName && lastName && email && phone_number && address && city && zipcode && paymentMethod && cardNumber && expiryDate && cvv) {
-      const randomDays = Math.floor(Math.random() * 5) + 3;
-      const deliveryDate = new Date();
-      deliveryDate.setDate(deliveryDate.getDate() + randomDays);
+  cart.forEach(item => {
+    const itemTotal = item.price * item.quantity;
+    subTotal += itemTotal;
+    totalTax += itemTotal * 0.0875;
 
-      fetch('https://api-baruchazon-server.onrender.com/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          phone_number,
-          address,
-          city,
-          zipcode,
-          paymentMethod,
-          cardNumber,
-          expiryDate,
-          cvv,
-          deliveryDate: deliveryDate.toISOString().split('T')[0],
-          cart
-        })
-      })
-      .then(response => {
-        if (!response.ok) throw new Error('Failed to submit order');
-        return response.json();
-      })
-      .then(data => {
-        console.log('Order saved:', data);
-        localStorage.setItem('orderDetails', JSON.stringify({
-          firstName,
-          lastName,
-          email,
-          phone_number,
-          address,
-          city,
-          zipcode,
-          deliveryDate: deliveryDate.toDateString(),
-          confirmationNumber: `BZ-${data.orderId}`
-        }));
-        localStorage.setItem('cartSnapshot', JSON.stringify(cart));
-        localStorage.removeItem('cart');
-        window.location.href = 'completed.html';
-      })
-      .catch(err => {
-        console.error(err);
-        alert("There was a problem placing your order.");
-      });
-    } else {
-      alert("Please fill out all fields correctly.");
-    }
+    const itemRow = document.createElement('div');
+    itemRow.className = 'row mb-4 align-items-center border-bottom pb-3';
+    itemRow.innerHTML = `
+      <div class="col-4 col-md-3">
+        <img src="images/${item.image_url}" alt="${item.name}" class="img-fluid rounded" style="max-height: 90px; object-fit: cover;">
+      </div>
+      <div class="col-8 col-md-9">
+        <h5 class="mb-1">${item.name}</h5>
+        <p class="mb-1 text-muted">Price: $${item.price.toFixed(2)}</p>
+        <p class="mb-0 text-muted">Quantity: ${item.quantity}</p>
+      </div>`;
+    cartItemsContainer.appendChild(itemRow);
   });
+
+  const totalAmount = subTotal + totalTax + shippingMethod;
+
+  cartTotal.innerHTML = `
+    <p>Subtotal: $${subTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</p>
+    <p>Taxes: $${totalTax.toLocaleString('en-US', {minimumFractionDigits: 2})}</p>
+    <p>Shipping: $${shippingMethod.toFixed(2)}</p>
+    <h5>Total: $${totalAmount.toLocaleString('en-US', {minimumFractionDigits: 2})}</h5>
+  `;
+}
+document.getElementById("checkout-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const firstName = document.getElementById("firstName").value;
+  const lastName = document.getElementById("lastName").value;
+  const email = document.getElementById("email").value;
+  const phone_number = document.getElementById("phone_number").value;
+  const address = document.getElementById("address").value;
+  const city = document.getElementById("city").value;
+  const zipcode = document.getElementById("zipcode").value;
+  const paymentMethod = document.getElementById("paymentMethod").value;
+  const cardNumber = document.getElementById("cardNumber").value;
+  const expiryDate = document.getElementById("expiryDate").value;
+  const cvv = document.getElementById("cvv").value;
+  const shippingMethodSelect = document.getElementById("shippingMethod");
+  const shippingMethod = shippingMethodSelect.value;
+  const shippingCost = parseFloat(shippingMethodSelect.selectedOptions[0].dataset.cost);
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+  const submitButton = document.querySelector("button[type='submit']");
+  submitButton.disabled = true;
+  submitButton.textContent = 'Processing...';
+
+  if (!cart.length) {
+    alert("Your cart is empty.");
+    return;
+  }
+
+  // Calculate subtotal, tax, total
+  let subTotal = 0;
+  cart.forEach(item => {
+    subTotal += item.price * item.quantity;
+  });
+  const tax = subTotal * 0.0875;
+  const total = subTotal + tax + shippingCost;
+
+  if (firstName && lastName && email && phone_number && address && city && zipcode && paymentMethod && cardNumber && expiryDate && cvv) {
+    const randomDays = Math.floor(Math.random() * 5) + 3;
+    const deliveryDate = new Date();
+    deliveryDate.setDate(deliveryDate.getDate() + randomDays);
+
+    fetch('https://api-baruchazon-server.onrender.com//api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        phone_number,
+        address,
+        city,
+        zipcode,
+        paymentMethod,
+        cardNumber,
+        expiryDate,
+        cvv,
+        deliveryDate: deliveryDate.toISOString().split('T')[0],
+        cart,
+        shippingMethod,
+        shippingCost: shippingCost.toFixed(2),
+        tax: tax.toFixed(2),
+        total: total.toFixed(2)
+      })
+    })
+    .then(response => {
+      if (!response.ok) throw new Error('Failed to submit order');
+      return response.json();
+    })
+    .then(data => {
+      console.log('Order saved:', data);
+      localStorage.setItem('orderDetails', JSON.stringify({
+        firstName,
+        lastName,
+        email,
+        phone_number,
+        address,
+        city,
+        zipcode,
+        deliveryDate: deliveryDate.toDateString(),
+        confirmationNumber: `BZ-${data.orderId}`,
+        shippingMethod,
+        shippingCost: shippingCost.toFixed(2),
+        tax: tax.toFixed(2),
+        total: total.toFixed(2)
+      }));
+      localStorage.setItem('cartSnapshot', JSON.stringify(cart));
+      localStorage.removeItem('cart');
+      window.location.href = 'completed.html';
+    })
+    .catch(err => {
+      console.error(err);
+      alert("There was a problem placing your order.");
+    });
+  } else {
+    alert("Please fill out all fields correctly.");
+  }
+});
+  displayCartItems();
+  
+    // Format card number 
+    document.getElementById("cardNumber").addEventListener("input", function(e) {
+    let value = e.target.value.replace(/\D/g, "").substring(0, 18);
+    value = value.replace(/(\d{4})(?=\d)/g, "$1 ");
+    e.target.value = value;
+  });
+
+  // Format expiry date 
+  document.getElementById("expiryDate").addEventListener("input", function(e) {
+    let value = e.target.value.replace(/\D/g, "").substring(0, 4);
+    if (value.length > 2) {
+      value = value.replace(/(\d{2})(\d{1,2})/, "$1/$2");
+    }
+    e.target.value = value;
+  });
+
+  // Restrict CVV to 4 digits max
+  document.getElementById("cvv").addEventListener("input", function(e) {
+    e.target.value = e.target.value.replace(/\D/g, "").substring(0, 4);
+  });
+
+  // Update cart items when shipping method changes
+  document.getElementById('shippingMethod').addEventListener('change', displayCartItems);
 </script>
 
 </body>

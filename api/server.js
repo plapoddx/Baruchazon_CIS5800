@@ -48,20 +48,26 @@ app.post('/api/orders', (req, res) => {
     expiryDate,
     cvv,
     deliveryDate,
-    cart
+    cart,
+    shippingMethod,
+    shippingCost,
+    tax,
+    total
   } = req.body;
 
   const orderSql = `
-    INSERT INTO orders 
-    (first_name, last_name, email, phone_number, address, city, zipcode, payment_method, card_number, expiry_date, cvv, delivery_date, status) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+  INSERT INTO orders 
+  (first_name, last_name, email, phone_number, address, city, zipcode, 
+   payment_method, card_number, expiry_date, cvv, delivery_date, status,
+   shipping_method, shipping_cost, tax, total) 
+  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+`;
 
-  const orderValues = [
-    firstName, lastName, email, phone_number, address,
-    city, zipcode, paymentMethod, cardNumber, expiryDate, cvv,
-    deliveryDate, 'Pending'
-  ];
+const orderValues = [
+  firstName, lastName, email, phone_number, address, city, zipcode,
+  paymentMethod, cardNumber, expiryDate, cvv, deliveryDate, 'Pending',
+  shippingMethod, shippingCost, tax, total
+];
 
   db.query(orderSql, orderValues, (err, result) => {
     if (err) {
@@ -311,6 +317,15 @@ app.delete('/api/products/:id', (req, res) => {
     }
     res.status(200).json({ message: 'Product deleted successfully' });
   });
+});
+
+app.post('/api/admin-login', (req, res) => {
+  const { username, password } = req.body;
+  if (username === 'admin' && password === 'password') {
+    res.json({ success: true });
+  } else {
+    res.status(401).json({ success: false, message: 'Unauthorized' });
+  }
 });
 
 const PORT = 3000;

@@ -119,10 +119,16 @@
   </div>
 </nav>
 <body>
-
+  <script>
+    // Redirect if not logged in
+    if (!localStorage.getItem('admin-auth')) {
+      alert("You must be logged in to access this page.");
+      window.location.href = "login.html";
+    }
+  </script>
 <div class="container">
   <div class="admin-header">
-    <h1>Baruchazon Admin Dashboard</h1>
+    <h1>Order Management</h1>
     <p>Manage your customer orders below!</p>
   </div>
 
@@ -211,13 +217,15 @@ function renderOrders(data) {
   }
 
   data.forEach(order => {
-    const total = order.items.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+    const subTotal = order.items.reduce((sum, item) => sum + (parseFloat(item.price) * item.quantity), 0);
+    const tax = subTotal * 0.08875; // NYC example
+    const shipping = order.shippingCost ? parseFloat(order.shippingCost) : 0;
+    const total = subTotal + tax + shipping;
     const rows = order.items.map(item => `
       <tr>
         <td>${item.product_name}</td>
         <td>${item.quantity}</td>
         <td>$${parseFloat(item.price).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-        <td>$${(parseFloat(item.price) * item.quantity).toFixed(2)}</td>
       </tr>`).join('');
 
     const card = document.createElement('div');
@@ -225,7 +233,6 @@ function renderOrders(data) {
     card.innerHTML = `
       <div class="order-header">
         <div>Order #${order.order_id} - ${order.name}</div>
-        <button class="btn btn-danger btn-sm" onclick="deleteOrder(${order.order_id})">Delete</button>
       </div>
       <div class="order-info">
         <p><strong>Email:</strong> ${order.email}</p>
@@ -247,15 +254,26 @@ function renderOrders(data) {
             <th>Item</th>
             <th>Qty</th>
             <th>Price</th>
-            <th>Subtotal</th>
           </tr>
         </thead>
         <tbody>
           ${rows}
-          <tr class="table-total">
-            <td colspan="3">Total</td>
-            <td>$${total.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-          </tr>
+<tr class="table-total text-right">
+  <td colspan="2">Subtotal</td>
+  <td>$${subTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+</tr>
+<tr class="table-total text-right">
+  <td colspan="2">Tax (8.875%)</td>
+  <td>$${tax.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+</tr>
+<tr class="table-total text-right">
+  <td colspan="2">Shipping</td>
+  <td>$${shipping.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+</tr>
+<tr class="table-total text-right">
+  <td colspan="2">Total</td>
+  <td>$${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+</tr>
         </tbody>
       </table>
     `;

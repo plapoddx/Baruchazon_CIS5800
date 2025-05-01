@@ -151,16 +151,10 @@ fetch('navbar.html')
             <th>Item</th>
             <th>Qty</th>
             <th>Price</th>
-            <th>Subtotal</th>
           </tr>
         </thead>
         <tbody id="order-items"></tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3" class="text-right">Total</td>
-            <td id="order-total"></td>
-          </tr>
-        </tfoot>
+        <tfoot id="order-summary-footer"></tfoot>
       </table>
       <text>For Order Cancellation. Please Contact: <b>supports@baruchazon.com</b></text>
     </div>
@@ -188,35 +182,53 @@ document.getElementById('lookup-form').addEventListener('submit', function(event
       return response.json();
     })
     .then(order => {
-      const orderItemsContainer = document.getElementById('order-items');
-      const totalDisplay = document.getElementById('order-total');
-      let total = 0;
+  const orderItemsContainer = document.getElementById('order-items');
+  const orderSummaryFooter = document.getElementById('order-summary-footer');
 
-      orderItemsContainer.innerHTML = '';
+  let subTotal = 0;
+  const taxRate = 0.08875;
+  const shipping = parseFloat(order.shippingCost) || 0;
 
-      order.items.forEach(item => {
-        const subtotal = parseFloat(item.price) * item.quantity;
-        total += subtotal;
-        const row = `
-          <tr>
-            <td>${item.product_name}</td>
-            <td>${item.quantity}</td>
-            <td>$${parseFloat(item.price).toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-            <td>$${subtotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
-          </tr>
-        `;
-        orderItemsContainer.innerHTML += row;
-      });
+  orderItemsContainer.innerHTML = '';
 
-      totalDisplay.textContent = `$${total.toLocaleString('en-US', { minimumFractionDigits: 2 })
-}`;
-      document.getElementById('order-result').style.display = 'block';
-    })
-    .catch(err => {
-      console.error('Lookup error:', err);
-      alert('Order not found! Please double-check your information.');
-      document.getElementById('order-result').style.display = 'none';
-    });
+  order.items.forEach(item => {
+    const itemTotal = parseFloat(item.price) * item.quantity;
+    subTotal += itemTotal;
+
+    const row = `
+      <tr>
+        <td>${item.product_name}</td>
+        <td>${item.quantity}</td>
+        <td>$${parseFloat(item.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+      </tr>
+    `;
+    orderItemsContainer.innerHTML += row;
+  });
+
+  const tax = subTotal * taxRate;
+  const total = subTotal + tax + shipping;
+
+  orderSummaryFooter.innerHTML = `
+    <tr class="table-total">
+      <td colspan="2" class="text-right">Subtotal</td>
+      <td class="text-right">$${subTotal.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+    </tr>
+    <tr class="table-total">
+      <td colspan="2" class="text-right">Tax (8.875%)</td>
+      <td class="text-right">$${tax.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+    </tr>
+    <tr class="table-total">
+      <td colspan="2" class="text-right">Shipping</td>
+      <td class="text-right">$${shipping.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+    </tr>
+    <tr class="table-total font-weight-bold">
+      <td colspan="2" class="text-right">Total</td>
+      <td class="text-right">$${total.toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+    </tr>
+  `;
+
+  document.getElementById('order-result').style.display = 'block';
+});
 });
 </script>
 
