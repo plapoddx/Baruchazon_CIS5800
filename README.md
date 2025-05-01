@@ -9,36 +9,39 @@ Welcome to **Baruchazon** — a full-featured e-commerce platform for online sho
   - View detailed product pages
   - Search, filter, and sort products by name, category, price, and rating
   - Add products to cart (Quick Add)
-  - Manage cart (remove items, view cart total)
-  - Guest Checkout
-  - Order Confirmation with order summary
-  - Ability to Cancel an order after purchase
+  - Manage cart (add/remove items, quantity adjustment, view cart total)
+  - Guest Checkout with tax and shipping cost calculations
+  - Order Confirmation with delivery estimate and order summary
+  - Ability to Cancel an order after purchase from confirmation page
   - View past orders with Lookup by confirmation number and email
+  - Leave item reviews (coming soon)
 
 - Admin Panel
-  - Dashboard to view all customer orders
-  - Update order status (Pending, Shipped, Delivered)
+  - Dashboard to view all customer orders with full item breakdown
+  - Update order status (Pending, Shipped, Delivered, Cancelled)
   - Delete/cancel orders
   - Manage Products (CRUD operations: Create, Read, Update, Delete)
-  - Product pagination and management
-  - Upload featured products (coming soon)
+  - Product pagination and search functionality
+  - Local Admin Authentication via localStorage
 
-- Database
-  - MySQL database for orders, order items, products
-  - RESTful API built using Node.js and Express.js
+- Backend & Database
+  - MySQL database to store orders, items, and products
+  - RESTful API with endpoints for orders, items, admin tools
+  - Order tracking with status history
+  - Guest email notifications (planned)
 
 - Frontend
-  - Responsive design using Bootstrap 4.3
-  - Carousel hero section
+  - Fully responsive layout using Bootstrap 4.3
+  - Carousel hero section and category UI
   - Interactive navigation bar
-  - Parallax effects for modern look
+  - Parallax scroll and hover polish for modern design
 
 ## Technologies Used
 
 - Frontend
   - HTML5, CSS3
-  - Bootstrap 4
-  - JavaScript (Vanilla)
+  - Bootstrap 4.3
+  - Vanilla JavaScript
 
 - Backend
   - Node.js
@@ -46,31 +49,13 @@ Welcome to **Baruchazon** — a full-featured e-commerce platform for online sho
   - MySQL2
 
 - Database
-  - MySQL Server
+  - MySQL
 
 - Others
-  - LocalStorage (Cart and Order Persistence)
+  - LocalStorage for cart and order persistence
   - REST API integration
+  - GitHub + Vercel deployment (frontend only)
 
-## Folder Structure
-
-```
-baruchazon/
-├── index.html
-├── products.html
-├── product.html
-├── cart.html
-├── guest.html
-├── completed.html
-├── lookup.html
-├── admin.html
-├── manage-products.html
-├── project.css
-├── server.js
-├── /images/
-├── /scripts/
-├── /api/
-└── README.md
 ```
 
 ## Installation Instructions
@@ -91,11 +76,11 @@ npm install express mysql2 cors
 3. Set up MySQL Database
 
 - Create a database `baruchazon`
-- Import the tables for:
+- Import the schema and data for:
   - `products`
   - `orders`
   - `order_items`
-- Adjust your `server.js` database credentials if necessary
+- Adjust your `server.js` database credentials
 
 4. Run the server
 
@@ -103,33 +88,31 @@ npm install express mysql2 cors
 node server.js
 ```
 
-The server should be running at `http://localhost:3000/`.
+The server will run at `http://localhost:3000/`.
 
 5. Open Frontend
 
-Use Live Server. VS Code Live Server Could be used
+- Use Live Server in VS Code or deploy using Vercel (static frontend)
 
 ## API Endpoints
 
 - `GET /api/products` — Fetch all products
-- `GET /api/products/:id` — Fetch a specific product
+- `GET /api/products/:id` — Fetch specific product
 - `POST /api/orders` — Create a new order
-- `GET /api/orders-with-items` — Fetch all orders with their items
+- `GET /api/orders-with-items` — View all orders with item details (admin)
 - `PUT /api/orders/:id/status` — Update order status
-- `DELETE /api/orders/:id` — Delete (cancel) an order
-- `POST /api/orders/lookup` — Lookup an order using confirmation number and email
+- `DELETE /api/orders/:id` — Delete/cancel order
+- `POST /api/orders/lookup` — Guest order lookup
 
 ## Future Enhancements
 
-- Featured product selection
-- Admin dashboard analytics (total sales, revenue)
-- Product image upload
-- User authentication and customer accounts
-- Real payment integration (Stripe or PayPal)
+- Featured products and categories
+- Admin dashboard with analytics
+- Product image upload tool
+- User authentication (customer login)
+- Email notifications (order receipts, updates)
+- Stripe or PayPal integration
 
 ## Developed By
 
 Baruchazon Team  
-2025 Project
-
-## Screenshots
