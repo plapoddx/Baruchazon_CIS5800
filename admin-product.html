@@ -237,18 +237,18 @@ function renderProducts(products) {
     const card = document.createElement('div');
     card.className = 'product-card';
     card.innerHTML = `
-      <div class="product-header">
-        <input type="checkbox" class="bulk-delete-checkbox" value="${product.id}">
-        ${product.name} - $${parseFloat(product.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
-        <div class="btn-group-sm">
-          <button class="btn btn-primary btn-sm" onclick='openEditProductModal(${JSON.stringify(product)})'>Edit</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">Delete</button>
-        </div>
-      </div>
-      <p><strong>Description:</strong> ${product.description}</p>
-      <p><strong>Rating:</strong> ${product.rating} ⭐</p>
-      <img src="${product.image_url}" alt="${product.name}" class="img-fluid" style="border-radius:8px; margin-top:10px; max-height:200px; object-fit:cover;">
-    `;
+  <div class="product-header">
+    <input type="checkbox" class="bulk-delete-checkbox" value="${product.id}">
+    ${product.name} - $${parseFloat(product.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+    <div class="btn-group-sm">
+      <button class="btn btn-primary btn-sm" onclick='openEditProductModal(${JSON.stringify(product)})'>Edit</button>
+      <button class="btn btn-danger btn-sm" onclick="deleteProduct(${product.id})">Delete</button>
+    </div>
+  </div>
+  <p><strong>Description:</strong> ${product.description}</p>
+  <p><strong>Rating:</strong> ${product.rating} ⭐</p>
+  <img src="${product.image_url}" alt="${product.name}" class="img-fluid" style="border-radius:8px; margin-top:10px; max-height:200px; object-fit:cover;">
+`;
     container.appendChild(card);
   });
 }
