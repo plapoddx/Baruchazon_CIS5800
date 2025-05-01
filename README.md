@@ -73,13 +73,11 @@ cd baruchazon
 npm install express mysql2 cors
 ```
 
-3. Set up MySQL Database
+3. Set up MySQL Database (Optional as Source Code hardcoded into server.js, and can query from there)
 
 - Create a database `baruchazon`
 - Import the schema and data for:
-  - `products`
-  - `orders`
-  - `order_items`
+  - `products` using 'inventory.csv' on DBeaver or MySQL Workbench
 - Adjust your `server.js` database credentials
 
 4. Run the server
@@ -88,11 +86,11 @@ npm install express mysql2 cors
 node server.js
 ```
 
-The server will run at `http://localhost:3000/`.
+The server will run at `https://api-baruchazon-server.onrender.com/`. or localhost:3000 if you run the 'server.js' locally 
 
 5. Open Frontend
 
-- Use Live Server in VS Code or deploy using Vercel (static frontend)
+- PLEASE Use Live Server in VS Code or deploy using Vercel (static frontend)
 
 ## API Endpoints
 
