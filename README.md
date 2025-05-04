@@ -5,36 +5,26 @@ Welcome to **Baruchazon** — a full-featured e-commerce platform for online sho
 ## Features
 
 - Customer Side
-  - Browse all products with pagination
+  - Browse all products
   - View detailed product pages
-  - Search, filter, and sort products by name, category, price, and rating
   - Add products to cart (Quick Add)
   - Manage cart (add/remove items, quantity adjustment, view cart total)
   - Guest Checkout with tax and shipping cost calculations
   - Order Confirmation with delivery estimate and order summary
   - Ability to Cancel an order after purchase from confirmation page
   - View past orders with Lookup by confirmation number and email
-  - Leave item reviews (coming soon)
 
 - Admin Panel
   - Dashboard to view all customer orders with full item breakdown
   - Update order status (Pending, Shipped, Delivered, Cancelled)
-  - Delete/cancel orders
-  - Manage Products (CRUD operations: Create, Read, Update, Delete)
+  - CRUD operations: Create, Read, Update, Delete - for Product Management
   - Product pagination and search functionality
-  - Local Admin Authentication via localStorage
-
+  - Local Admin Authentication
+  - 
 - Backend & Database
   - MySQL database to store orders, items, and products
   - RESTful API with endpoints for orders, items, admin tools
   - Order tracking with status history
-  - Guest email notifications (planned)
-
-- Frontend
-  - Fully responsive layout using Bootstrap 4.3
-  - Carousel hero section and category UI
-  - Interactive navigation bar
-  - Parallax scroll and hover polish for modern design
 
 ## Technologies Used
 
